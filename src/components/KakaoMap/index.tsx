@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
 import * as S from "./style";
 import { Attraction } from "@/utils/tourism";
 
@@ -15,12 +15,33 @@ interface Props {
     onCenterChange?: (lat: number, lng: number) => void;
 }
 
-export default function KakaoMap({ attractions, onCenterChange }: Props) {
+export interface KakaoMapHandle {
+    setCenterToUser: () => void;
+}
+
+const KakaoMap = forwardRef<KakaoMapHandle, Props>(({ attractions, onCenterChange }, ref) => {
     const mapContainer = useRef<HTMLDivElement>(null);
     const mapRef = useRef<any>(null);
     const markersRef = useRef<any[]>([]);
     const customOverlaysRef = useRef<any[]>([]);
     const polylineRef = useRef<any>(null);
+
+    useImperativeHandle(ref, () => ({
+        setCenterToUser: () => {
+            if (navigator.geolocation && mapRef.current) {
+                navigator.geolocation.getCurrentPosition(
+                    pos => {
+                        const userPos = new window.kakao.maps.LatLng(pos.coords.latitude, pos.coords.longitude);
+                        mapRef.current.panTo(userPos);
+                    },
+                    err => {
+                        console.warn("Geolocation error:", err);
+                        alert("현재 위치를 가져올 수 없습니다. 위치 권한을 확인해주세요.");
+                    }
+                );
+            }
+        }
+    }));
 
     const [startPoint, setStartPoint] = useState<{ lat: number; lng: number } | null>(null);
     const [endPoint, setEndPoint] = useState<{
@@ -220,4 +241,6 @@ export default function KakaoMap({ attractions, onCenterChange }: Props) {
             </S.CoordBoxContainer>
         </S.MapWrapper>
     );
-}
+});
+
+export default KakaoMap;

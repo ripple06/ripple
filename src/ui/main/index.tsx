@@ -1,13 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import * as S from "./style";
 import BottomNav from "@/components/BottomNav";
-import KakaoMap from "@/components/KakaoMap";
+import KakaoMap, { KakaoMapHandle } from "@/components/KakaoMap";
 import Image from "next/image";
 import { fetchNearbyAttractions, Attraction } from "@/utils/tourism";
 
 export default function Main() {
+    const mapRef = useRef<KakaoMapHandle>(null);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [attractions, setAttractions] = useState<Attraction[]>([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -30,10 +31,16 @@ export default function Main() {
         }
     };
 
+    const handleCenterToUser = () => {
+        mapRef.current?.setCenterToUser();
+        setIsMenuOpen(false);
+    };
+
     return (
         <S.Layout>
             <S.Container>
                 <KakaoMap
+                    ref={mapRef}
                     attractions={attractions}
                     onCenterChange={(lat: number, lng: number) => setMapCenter({ lat, lng })}
                 />
@@ -43,7 +50,7 @@ export default function Main() {
                             {isLoading ? "검색 중..." : "주변 볼거리"}
                         </S.FloatingButton>
                         <S.FloatingButton>최근 코스 불러오기</S.FloatingButton>
-                        <S.FloatingButton>현재 내 위치</S.FloatingButton>
+                        <S.FloatingButton onClick={handleCenterToUser}>현재 내 위치</S.FloatingButton>
                     </S.TopLeftGroup>
                 )}
                 <S.MenuButton onClick={() => setIsMenuOpen(!isMenuOpen)}>
