@@ -88,7 +88,6 @@ export default function Main() {
                         <S.FloatingButton onClick={handleNearbySearch} disabled={isLoading}>
                             {isLoading ? "검색 중..." : "주변 볼거리"}
                         </S.FloatingButton>
-                        <S.FloatingButton>최근 코스 불러오기</S.FloatingButton>
                         <S.FloatingButton onClick={handleCenterToUser}>현재 내 위치</S.FloatingButton>
                     </S.TopLeftGroup>
                 )}
