@@ -52,20 +52,16 @@ export default function SignUp() {
             const userData = signupResponse.data;
             console.log("[SignUp] Backend response:", userData);
             
-            // 2. 사용자 ID 생성/관리 (로컬스토리지에서 관리)
-            let userId: number;
-            const lastUserIdStr = localStorage.getItem("last_user_id");
-            if (lastUserIdStr) {
-                // 기존 사용자 ID가 있으면 1 증가
-                userId = parseInt(lastUserIdStr, 10) + 1;
-            } else {
-                // 첫 사용자면 1부터 시작
-                userId = 1;
+            // 2. 사용자 ID 생성 (이름 기반 해시)
+            // 이름을 해시해서 숫자 ID로 변환 (같은 이름이면 같은 ID)
+            let hash = 0;
+            for (let i = 0; i < trimmedName.length; i++) {
+                const char = trimmedName.charCodeAt(i);
+                hash = ((hash << 5) - hash) + char;
+                hash = hash & hash; // Convert to 32bit integer
             }
-            
-            // 마지막 사용자 ID 업데이트
-            localStorage.setItem("last_user_id", userId.toString());
-            console.log("[SignUp] Generated user ID:", userId);
+            const userId = Math.abs(hash);
+            console.log("[SignUp] Generated user ID from name:", userId, "for name:", trimmedName);
 
             // 3. 로컬스토리지에 사용자 정보 저장 (MBTI 포함)
             const userInfo = { id: userId, name: trimmedName, mbti: trimmedMbti };
