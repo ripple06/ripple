@@ -105,7 +105,8 @@ const KakaoMap = forwardRef<KakaoMapHandle, Props>(({ attractions, onCenterChang
                         });
                     });
 
-                    // 현재 위치 중심
+                    // 현재 위치 중심 로직 제거 (사용자가 '현재 내 위치' 버튼을 누를 때만 동작하도록 함)
+                    /*
                     if (navigator.geolocation) {
                         navigator.geolocation.getCurrentPosition(
                             pos => {
@@ -115,6 +116,7 @@ const KakaoMap = forwardRef<KakaoMapHandle, Props>(({ attractions, onCenterChang
                             err => console.warn("Geolocation error:", err)
                         );
                     }
+                    */
                 }
             });
         };

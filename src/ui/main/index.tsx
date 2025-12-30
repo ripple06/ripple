@@ -20,21 +20,33 @@ export default function Main() {
 
     const region = searchParams.get('region');
 
-    const coursePath = useMemo(() => {
-        const regionCourses = region ? REGION_DATA[region]?.courses : null;
-        return regionCourses ? regionCourses.map(c => ({ lat: c.lat, lng: c.lng, title: c.name })) : undefined;
+    const [coursePath, setCoursePath] = useState<{ lat: number; lng: number; title: string }[] | undefined>(undefined);
+
+    useEffect(() => {
+        if (region) {
+            // 1. region 쿼리 파라미터가 있으면 해당 데이터를 사용하고 로컬 스토리지에 저장
+            const regionCourses = REGION_DATA[region]?.courses;
+            if (regionCourses) {
+                const newPath = regionCourses.map(c => ({ lat: c.lat, lng: c.lng, title: c.name }));
+                setCoursePath(newPath);
+                localStorage.setItem("current_course", JSON.stringify(newPath));
+            }
+        } else {
+            // 2. region 쿼리 파라미터가 없으면 로컬 스토리지에서 이전 코스 정보를 불러옴
+            const stored = localStorage.getItem("current_course");
+            if (stored) {
+                try {
+                    setCoursePath(JSON.parse(stored));
+                } catch (e) {
+                    console.error("Failed to parse stored course", e);
+                }
+            }
+        }
     }, [region]);
 
-    // 코스 경로가 있으면 로컬 스토리지에 저장
-    useEffect(() => {
-        if (coursePath && coursePath.length > 0) {
-            localStorage.setItem("current_course", JSON.stringify(coursePath));
-        }
-    }, [coursePath]);
-
     const handleFinishCourse = () => {
-        // 코스 완료 시 로컬 스토리지 정리 (선택 사항, 여기서는 유지하되 페이지 이동만 함)
-        // localStorage.removeItem("current_course"); 
+        // 코스 완료 시 로컬 스토리지 정리
+        localStorage.removeItem("current_course");
         router.push('/question');
     };
 
