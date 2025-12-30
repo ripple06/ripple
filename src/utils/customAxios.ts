@@ -75,7 +75,7 @@ async function customAxios<T = any>(config: AxiosRequestConfig): Promise<AxiosRe
     };
 
     // Add body for methods that support it
-    if (method !== 'GET' && method !== 'HEAD' && data !== undefined) {
+    if ((method === 'POST' || method === 'PUT' || method === 'DELETE' || method === 'PATCH') && data !== undefined) {
         fetchOptions.body = JSON.stringify(data);
     }
 
