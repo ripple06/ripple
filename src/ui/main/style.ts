@@ -35,13 +35,13 @@ export const Container = styled.div`
 `;
 
 export const TopLeftGroup = styled.div`
-  position: absolute;
-  top: 60vh;
-  left: 1.5rem;
-  z-index: 10;
+  position: fixed;
+  bottom: 210px;
+  z-index: 20;
   display: flex;
   flex-direction: column;
-  gap: 0.8rem;
+  gap: 12px;
+  margin-left: 20px;
 `;
 
 export const FloatingButton = styled.button`
@@ -53,12 +53,13 @@ export const FloatingButton = styled.button`
   font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 12px rgba(115, 100, 254, 0.15);
   white-space: nowrap;
   animation: ${slideUp} 0.3s ease-out;
   
   &:active {
     background-color: #f8f8ff;
+    transform: scale(0.98);
   }
 `;
 
