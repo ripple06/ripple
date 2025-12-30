@@ -3,7 +3,7 @@
 
 interface AxiosRequestConfig {
     url?: string;
-    method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+    method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH' | 'HEAD';
     headers?: Record<string, string>;
     data?: any;
     params?: Record<string, string | number | boolean>;
@@ -81,11 +81,11 @@ async function customAxios<T = any>(config: AxiosRequestConfig): Promise<AxiosRe
 
     try {
         const response = await fetch(fullUrl, fetchOptions);
-        
+
         // Parse response
         const contentType = response.headers.get('content-type');
         let responseData: any;
-        
+
         if (contentType && contentType.includes('application/json')) {
             try {
                 responseData = await response.json();
