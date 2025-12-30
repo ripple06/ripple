@@ -49,6 +49,14 @@ export default function MyPage() {
 
         localStorage.setItem("user_info", JSON.stringify(updatedInfo));
         setUserInfo(updatedInfo);
+        alert("프로필이 성공적으로 수정되었습니다.");
+    };
+
+    const handleCancel = () => {
+        if (userInfo) {
+            setNickname(userInfo.name);
+            setMbti(userInfo.mbti);
+        }
     };
 
     const comments = [
@@ -86,7 +94,7 @@ export default function MyPage() {
                     </S.InputGroup>
                     <S.ButtonGroup>
                         <S.SubmitButton onClick={handleUpdate}>수정하기</S.SubmitButton>
-                        <S.CancelButton onClick={() => router.push("/main")}>취소</S.CancelButton>
+                        <S.CancelButton onClick={handleCancel}>취소</S.CancelButton>
                     </S.ButtonGroup>
                 </S.Section>
 
