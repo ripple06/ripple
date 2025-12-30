@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import * as S from "./style";
+import { Attraction } from "@/utils/tourism";
 
 declare global {
     interface Window {
@@ -9,14 +10,21 @@ declare global {
     }
 }
 
-export default function KakaoMap() {
+interface Props {
+    attractions?: Attraction[];
+    onCenterChange?: (lat: number, lng: number) => void;
+}
+
+export default function KakaoMap({ attractions, onCenterChange }: Props) {
     const mapContainer = useRef<HTMLDivElement>(null);
     const mapRef = useRef<any>(null);
     const markersRef = useRef<any[]>([]);
+    const attractionMarkersRef = useRef<any[]>([]);
     const polylineRef = useRef<any>(null);
 
     const [startPoint, setStartPoint] = useState<{ lat: number; lng: number } | null>(null);
-    const [endPoint, setEndPoint] = useState<{ lat: number; lng: number 
+    const [endPoint, setEndPoint] = useState<{
+        lat: number; lng: number
 
     } | null>(null);
 
@@ -47,6 +55,19 @@ export default function KakaoMap() {
 
                 if (mapContainer.current) {
                     mapRef.current = new window.kakao.maps.Map(mapContainer.current, options);
+
+                    // 중심 좌표 변경 감지 (idle 이벤트는 이동이 끝났을 때 발생)
+                    window.kakao.maps.event.addListener(mapRef.current, "idle", () => {
+                        if (onCenterChange) {
+                            const center = mapRef.current.getCenter();
+                            onCenterChange(center.getLat(), center.getLng());
+                        }
+                    });
+
+                    // 초기 중심 좌표 전달
+                    if (onCenterChange) {
+                        onCenterChange(defaultCenter.getLat(), defaultCenter.getLng());
+                    }
 
                     // 지도 클릭 이벤트
                     window.kakao.maps.event.addListener(mapRef.current, "click", (mouseEvent: any) => {
@@ -130,6 +151,42 @@ export default function KakaoMap() {
             });
         }
     }, [startPoint, endPoint]);
+
+    // 3️⃣ 관광 정보 마커 업데이트
+    useEffect(() => {
+        if (!mapRef.current || !window.kakao || !attractions) return;
+
+        // 기존 관광 마커 제거
+        attractionMarkersRef.current.forEach(marker => marker.setMap(null));
+        attractionMarkersRef.current = [];
+
+        const kakao = window.kakao;
+
+        attractions.forEach(attraction => {
+            const marker = new kakao.maps.Marker({
+                position: new kakao.maps.LatLng(Number(attraction.mapy), Number(attraction.mapx)),
+                map: mapRef.current,
+                title: attraction.title,
+                // 관광지 마커임을 구분하기 위해 투명도를 주거나 이미지를 다르게 할 수 있음
+                opacity: 0.8
+            });
+
+            // 커스텀 오버레이나 인포윈도우 추가 가능
+            const infowindow = new kakao.maps.InfoWindow({
+                content: `<div style="padding:5px; font-size:12px; color:#333;">${attraction.title}</div>`
+            });
+
+            kakao.maps.event.addListener(marker, 'mouseover', () => {
+                infowindow.open(mapRef.current, marker);
+            });
+
+            kakao.maps.event.addListener(marker, 'mouseout', () => {
+                infowindow.close();
+            });
+
+            attractionMarkersRef.current.push(marker);
+        });
+    }, [attractions]);
 
     const resetPoints = () => {
         setStartPoint(null);
