@@ -45,8 +45,8 @@ export default function Main() {
     }, [region]);
 
     const handleFinishCourse = () => {
-        // 코스 완료 시 로컬 스토리지 정리
-        localStorage.removeItem("current_course");
+        // 코스 완료 시 로컬 스토리지 정리 -> 쪽지 페이지에서 삭제하도록 변경하여 주석 처리
+        // localStorage.removeItem("current_course");
         router.push('/question');
     };
 

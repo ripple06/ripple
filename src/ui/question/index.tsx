@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import BottomNav from "@/components/BottomNav";
@@ -9,6 +9,15 @@ import * as S from "./style";
 export default function Question() {
     const router = useRouter();
     const [question, setQuestion] = useState("");
+
+    // 진행 중인 코스가 없으면 접근 제한
+    useEffect(() => {
+        const currentCourse = localStorage.getItem("current_course");
+        if (!currentCourse) {
+            alert("진행 중인 코스가 없어 쪽지를 남길 수 없습니다.");
+            router.push("/main");
+        }
+    }, [router]);
 
     const handleComplete = () => {
         if (!question.trim()) {
@@ -22,6 +31,9 @@ export default function Question() {
         localStorage.setItem("my_comments", JSON.stringify(comments));
 
         router.push("/main");
+
+        // 쪽지 작성 후 코스 완료 처리 (로컬 스토리지 삭제)
+        localStorage.removeItem("current_course");
     };
 
     return (
