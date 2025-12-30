@@ -72,7 +72,7 @@ const KakaoMap = forwardRef<KakaoMapHandle, Props>(({ attractions, onCenterChang
 
         const initializeMap = () => {
             window.kakao.maps.load(() => {
-                const defaultCenter = new window.kakao.maps.LatLng(37.566826, 126.9786567);
+                const defaultCenter = new window.kakao.maps.LatLng(35.1795543, 129.0756416); // 부산 중심
                 const options = { center: defaultCenter, level: 3 };
 
                 if (mapContainer.current) {
