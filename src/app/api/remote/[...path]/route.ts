@@ -1,25 +1,33 @@
 import { NextResponse } from "next/server";
 
-export async function GET(request: Request, { params }: { params: { path: string[] } }) {
-    return handleRequest(request, params.path, "GET");
+export async function GET(request: Request, { params }: { params: { path: string[] } | Promise<{ path: string[] }> }) {
+    const resolved = await params;
+    return handleRequest(request, resolved?.path, "GET");
 }
 
-export async function POST(request: Request, { params }: { params: { path: string[] } }) {
-    return handleRequest(request, params.path, "POST");
+export async function POST(request: Request, { params }: { params: { path: string[] } | Promise<{ path: string[] }> }) {
+    const resolved = await params;
+    return handleRequest(request, resolved?.path, "POST");
 }
 
-export async function PUT(request: Request, { params }: { params: { path: string[] } }) {
-    return handleRequest(request, params.path, "PUT");
+export async function PUT(request: Request, { params }: { params: { path: string[] } | Promise<{ path: string[] }> }) {
+    const resolved = await params;
+    return handleRequest(request, resolved?.path, "PUT");
 }
 
-export async function DELETE(request: Request, { params }: { params: { path: string[] } }) {
-    return handleRequest(request, params.path, "DELETE");
+export async function DELETE(request: Request, { params }: { params: { path: string[] } | Promise<{ path: string[] }> }) {
+    const resolved = await params;
+    return handleRequest(request, resolved?.path, "DELETE");
 }
 
-async function handleRequest(request: Request, path: string[], method: string) {
+async function handleRequest(request: Request, path: string[] | undefined, method: string) {
     const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
     if (!backendUrl) {
         return NextResponse.json({ error: "Backend URL is not defined" }, { status: 500 });
+    }
+
+    if (!path || path.length === 0) {
+        return NextResponse.json({ error: "No path provided to proxy" }, { status: 400 });
     }
 
     const { searchParams } = new URL(request.url);

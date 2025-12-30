@@ -12,8 +12,7 @@ export default function SignUp() {
     const [error, setError] = useState("");
     const [isLoading, setIsLoading] = useState(false);
 
-    // .env에 설정한 백엔드 URL
-    const API_URL = process.env.NEXT_PUBLIC_API_URL;
+    // API 호출은 내부 프록시(`/api/remote/...`)를 사용합니다. 백엔드 주소는 `NEXT_PUBLIC_BACKEND_URL`에 설정하세요.
 
     const handleSignUp = async () => {
         const trimmedName = userName.trim();
@@ -45,31 +44,44 @@ export default function SignUp() {
         setIsLoading(true);
 
         try {
-            // 1. 회원가입
-            const signupResponse = await fetch(`/signup`, {
+            // 1. 회원가입 (프록시 `/api/remote/signup` 사용)
+            const signupUrl = `/api/signup`;
+            const signupResponse = await fetch(signupUrl, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ name: trimmedName, password: trimmedPassword })
             });
 
             if (!signupResponse.ok) {
-                const errorData = await signupResponse.json();
-                throw new Error(errorData.detail || "회원가입에 실패했습니다.");
+                let errMsg = "회원가입에 실패했습니다.";
+                try {
+                    const errorData = await signupResponse.json();
+                    errMsg = errorData.detail || errorData.message || errorData.error || errMsg;
+                } catch {}
+                throw new Error(errMsg);
             }
 
             const userData = await signupResponse.json();
-            const userId = userData.id;
+            const userId = userData.id ?? userData.user_id ?? userData._id ?? userData.data?.id;
+            if (!userId) {
+                throw new Error("회원 가입 후 사용자 id를 받지 못했습니다.");
+            }
 
-            // 2. MBTI 저장
-            const mbtiResponse = await fetch(`${API_URL}/users/${userId}/mbti`, {
+            // 2. MBTI 저장 (API 명세에 따르면 엔드포인트는 /mbti/{user_id})
+            const mbtiUrl = `/api/remote/mbti/${userId}`;
+            const mbtiResponse = await fetch(mbtiUrl, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ mbti: trimmedMbti })
             });
 
             if (!mbtiResponse.ok) {
-                const mbtiError = await mbtiResponse.json();
-                setError(mbtiError.detail || "MBTI 저장에 실패했습니다.");
+                let errMsg = "MBTI 저장에 실패했습니다.";
+                try {
+                    const mbtiError = await mbtiResponse.json();
+                    errMsg = mbtiError.detail || mbtiError.message || mbtiError.error || errMsg;
+                } catch {}
+                setError(errMsg);
                 setIsLoading(false);
                 return;
             }

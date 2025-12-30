@@ -16,6 +16,9 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
+**Backend configuration**: If the app needs to talk to your backend API, set the environment variable `NEXT_PUBLIC_BACKEND_URL` (for example in a `.env.local` file) to the backend base URL (e.g. `https://api.example.com`). The frontend sends requests through the internal proxy endpoints (`/api/remote/...`) which forward to that backend. Restart the dev server after changing environment variables.
+
+
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.

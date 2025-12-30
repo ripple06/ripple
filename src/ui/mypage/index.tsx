@@ -24,7 +24,7 @@ export default function MyPage() {
             // 서버에서 최신 MBTI 정보를 가져와 로컬 데이터 보완
             const fetchMbti = async () => {
                 try {
-                    const res = await fetch(`/mbti/${parsed.id}`);
+                    const res = await fetch(`/api/remote/mbti/${parsed.id}`);
                     if (res.ok) {
                         const data = await res.json();
                         if (data.mbti && data.mbti !== parsed.mbti) {
@@ -69,7 +69,7 @@ export default function MyPage() {
         setIsLoading(true);
         try {
             // 1. Update MBTI on server
-            const mbtiResponse = await fetch(`/mbti/${userInfo.id}`, {
+            const mbtiResponse = await fetch(`/api/remote/mbti/${userInfo.id}`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ mbti: trimmedMbti })
