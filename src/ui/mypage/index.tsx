@@ -20,28 +20,30 @@ export default function MyPage() {
             const parsed = JSON.parse(storedInfo);
             setUserInfo(parsed);
             setNickname(parsed.name);
+            // 로컬스토리지에서 MBTI 표시
+            setMbti(parsed.mbti || "");
 
-            // 서버에서 최신 MBTI 정보를 가져와 로컬 데이터 보완
-            const fetchMbti = async () => {
-                try {
-                    const res = await fetch(`/api/mbti/${parsed.id}`);
-                    if (res.ok) {
-                        const data = await res.json();
-                        if (data.mbti && data.mbti !== parsed.mbti) {
-                            const updated = { ...parsed, mbti: data.mbti };
-                            setMbti(data.mbti);
-                            setUserInfo(updated);
-                            localStorage.setItem("user_info", JSON.stringify(updated));
+            // 로컬스토리지에 MBTI가 있으면 백엔드로 동기화
+            const syncMbtiToBackend = async () => {
+                if (parsed.mbti && parsed.id) {
+                    try {
+                        console.log(`[MyPage] Syncing MBTI to backend for user ${parsed.id}:`, parsed.mbti);
+                        const res = await fetch(`/api/mbti/${parsed.id}`, {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ mbti: parsed.mbti })
+                        });
+                        if (res.ok) {
+                            console.log("[MyPage] MBTI synced to backend successfully");
                         } else {
-                            setMbti(data.mbti || parsed.mbti);
+                            console.warn("[MyPage] Failed to sync MBTI to backend:", res.status);
                         }
+                    } catch (err) {
+                        console.error("[MyPage] Error syncing MBTI to backend:", err);
                     }
-                } catch (err) {
-                    console.error("Failed to fetch MBTI from server:", err);
-                    setMbti(parsed.mbti); // Fallback to local
                 }
             };
-            fetchMbti();
+            syncMbtiToBackend();
         }
     }, []);
 
@@ -69,17 +71,18 @@ export default function MyPage() {
         setIsLoading(true);
         try {
             // 1. Update MBTI on server
-            const mbtiResponse = await fetch(`/api/remote/mbti/${userInfo.id}`, {
+            const mbtiResponse = await fetch(`/api/mbti/${userInfo.id}`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ mbti: trimmedMbti })
             });
 
             if (!mbtiResponse.ok) {
-                throw new Error("서버에 MBTI를 저장하는 데 실패했습니다.");
+                const errorData = await mbtiResponse.json().catch(() => ({}));
+                throw new Error(errorData.detail || errorData.message || "서버에 MBTI를 저장하는 데 실패했습니다.");
             }
 
-            // 2. Update local storage (nickname is currently local-only update)
+            // 2. Update local storage
             const updatedInfo = {
                 ...userInfo,
                 name: trimmedNickname,

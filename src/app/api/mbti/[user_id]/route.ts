@@ -2,28 +2,28 @@ import { NextResponse } from "next/server";
 
 export async function GET(
     request: Request,
-    { params }: { params: Promise<{ user_id: string }> | { user_id: string } }
+    { params }: { params: { user_id: string } | Promise<{ user_id: string }> }
 ) {
-    const resolved = params instanceof Promise ? await params : params;
-    const userId = resolved?.user_id;
-
-    if (!userId) {
-        return NextResponse.json(
-            { error: "User ID is required" },
-            { status: 400 }
-        );
-    }
-
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
-    if (!backendUrl) {
-        console.error("[MBTI API] NEXT_PUBLIC_BACKEND_URL is not defined");
-        return NextResponse.json(
-            { error: "Backend URL is not defined" },
-            { status: 500 }
-        );
-    }
-
     try {
+        const resolvedParams = params instanceof Promise ? await params : params;
+        const userId = resolvedParams.user_id;
+
+        if (!userId) {
+            return NextResponse.json(
+                { error: "User ID is required" },
+                { status: 400 }
+            );
+        }
+
+        const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
+        if (!backendUrl) {
+            console.error("[MBTI API] NEXT_PUBLIC_BACKEND_URL is not defined");
+            return NextResponse.json(
+                { error: "Backend URL is not defined" },
+                { status: 500 }
+            );
+        }
+
         const cleanBackendUrl = backendUrl.replace(/\/+$/, '');
         const endpoint = `${cleanBackendUrl}/mbti/${userId}`;
         console.log(`[MBTI API] GET ${endpoint}`);
@@ -58,28 +58,28 @@ export async function GET(
 
 export async function POST(
     request: Request,
-    { params }: { params: Promise<{ user_id: string }> | { user_id: string } }
+    { params }: { params: { user_id: string } | Promise<{ user_id: string }> }
 ) {
-    const resolved = params instanceof Promise ? await params : params;
-    const userId = resolved?.user_id;
-
-    if (!userId) {
-        return NextResponse.json(
-            { error: "User ID is required" },
-            { status: 400 }
-        );
-    }
-
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
-    if (!backendUrl) {
-        console.error("[MBTI API] NEXT_PUBLIC_BACKEND_URL is not defined");
-        return NextResponse.json(
-            { error: "Backend URL is not defined" },
-            { status: 500 }
-        );
-    }
-
     try {
+        const resolvedParams = params instanceof Promise ? await params : params;
+        const userId = resolvedParams.user_id;
+
+        if (!userId) {
+            return NextResponse.json(
+                { error: "User ID is required" },
+                { status: 400 }
+            );
+        }
+
+        const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
+        if (!backendUrl) {
+            console.error("[MBTI API] NEXT_PUBLIC_BACKEND_URL is not defined");
+            return NextResponse.json(
+                { error: "Backend URL is not defined" },
+                { status: 500 }
+            );
+        }
+
         const body = await request.json().catch(() => null);
         
         if (!body || !body.mbti) {
@@ -88,9 +88,7 @@ export async function POST(
                 { status: 400 }
             );
         }
-
-        const cleanBackendUrl = backendUrl.replace(/\/+$/, '');
-        const endpoint = `${cleanBackendUrl}/mbti/${userId}`;
+        const endpoint = `/api/mbti/${userId}`;
         console.log(`[MBTI API] POST ${endpoint}`, body);
 
         const response = await fetch(endpoint, {
