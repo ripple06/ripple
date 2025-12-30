@@ -7,15 +7,23 @@ import { VALID_MBTI_TYPES } from "@/constants/mbti";
 export default function SignUp() {
     const router = useRouter();
     const [userName, setUserName] = useState("");
+    const [password, setPassword] = useState("");
     const [mbti, setMbti] = useState("");
     const [error, setError] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
 
-    const handleLogin = () => {
+    const handleLogin = async () => {
         const trimmedName = userName.trim();
+        const trimmedPassword = password.trim();
         const trimmedMbti = mbti.trim();
 
         if (trimmedName.length <= 2) {
             setError("닉네임을 3글자 이상 입력해주세요.");
+            return;
+        }
+
+        if (trimmedPassword.length === 0) {
+            setError("비밀번호를 입력해주세요.");
             return;
         }
 
@@ -30,20 +38,48 @@ export default function SignUp() {
         }
 
         setError("");
+        setIsLoading(true);
 
-        // ID 자동 증가 로직
-        const lastId = localStorage.getItem("last_user_id");
-        const newId = lastId ? parseInt(lastId) + 1 : 1;
+        try {
+            // 1. Signup
+            const signupResponse = await fetch("/api/remote/signup", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ name: trimmedName, password: trimmedPassword })
+            });
 
-        const userInfo = {
-            id: newId,
-            name: trimmedName,
-            mbti: trimmedMbti.toUpperCase()
-        };
+            if (!signupResponse.ok) {
+                const errorData = await signupResponse.json();
+                throw new Error(errorData.detail || "회원가입에 실패했습니다.");
+            }
 
-        localStorage.setItem("user_info", JSON.stringify(userInfo));
-        localStorage.setItem("last_user_id", newId.toString());
-        router.push("/success");
+            const userData = await signupResponse.json();
+            const userId = userData.id;
+
+            // 2. Save MBTI
+            const mbtiResponse = await fetch(`/api/remote/mbti/${userId}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ mbti: trimmedMbti.toUpperCase() })
+            });
+
+            if (!mbtiResponse.ok) {
+                console.error("Failed to save MBTI to server, but signup was successful.");
+            }
+
+            const userInfo = {
+                id: userId,
+                name: trimmedName,
+                mbti: trimmedMbti.toUpperCase()
+            };
+
+            localStorage.setItem("user_info", JSON.stringify(userInfo));
+            router.push("/success");
+        } catch (err: any) {
+            setError(err.message || "오류가 발생했습니다. 다시 시도해주세요.");
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     return (
@@ -74,6 +110,18 @@ export default function SignUp() {
                         />
                     </S.InputGroup>
                     <S.InputGroup>
+                        <S.Label>비밀번호<span>*</span></S.Label>
+                        <S.Input
+                            type="password"
+                            placeholder="비밀번호를 입력해주세요"
+                            value={password}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                                setPassword(e.target.value);
+                                if (error) setError("");
+                            }}
+                        />
+                    </S.InputGroup>
+                    <S.InputGroup>
                         <S.Label>MBTI<span>*</span></S.Label>
                         <S.Input
                             placeholder="ISTP"
@@ -85,7 +133,9 @@ export default function SignUp() {
                         />
                     </S.InputGroup>
                     <S.ErrorMessage>{error}</S.ErrorMessage>
-                    <S.BottomButton onClick={handleLogin}>다음</S.BottomButton>
+                    <S.BottomButton onClick={handleLogin} disabled={isLoading}>
+                        {isLoading ? "처리 중..." : "다음"}
+                    </S.BottomButton>
                 </S.Form>
             </S.Container>
         </S.Layout>

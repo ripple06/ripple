@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import * as S from "./style";
 import BottomNav from "@/components/BottomNav";
 import KakaoMap, { KakaoMapHandle } from "@/components/KakaoMap";
@@ -13,6 +13,34 @@ export default function Main() {
     const [attractions, setAttractions] = useState<Attraction[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [mapCenter, setMapCenter] = useState<{ lat: number; lng: number } | null>(null);
+
+    // 백엔드 데이터 동기화 로직
+    useEffect(() => {
+        const syncUserData = async () => {
+            const storedInfo = localStorage.getItem("user_info");
+            if (!storedInfo) return;
+
+            const userInfo = JSON.parse(storedInfo);
+
+            try {
+                // 1. 서버에서 MBTI 정보가 있는지 확인
+                const checkRes = await fetch(`/api/remote/mbti/${userInfo.id}`);
+                if (!checkRes.ok && checkRes.status === 404) {
+                    // 서버에 정보가 없으면 로컬 정보를 전송 (동기화)
+                    console.log("[Sync] Pushing local MBTI to server...");
+                    await fetch(`/api/remote/mbti/${userInfo.id}`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ mbti: userInfo.mbti })
+                    });
+                }
+            } catch (err) {
+                console.error("[Sync] Failed to sync with backend:", err);
+            }
+        };
+
+        syncUserData();
+    }, []);
 
     const handleNearbySearch = async () => {
         if (!mapCenter) {

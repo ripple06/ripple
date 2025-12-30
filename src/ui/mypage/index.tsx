@@ -12,6 +12,7 @@ export default function MyPage() {
     const [nickname, setNickname] = useState("");
     const [mbti, setMbti] = useState("");
     const [userInfo, setUserInfo] = useState<{ id: number; name: string; mbti: string } | null>(null);
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         const storedInfo = localStorage.getItem("user_info");
@@ -19,37 +20,80 @@ export default function MyPage() {
             const parsed = JSON.parse(storedInfo);
             setUserInfo(parsed);
             setNickname(parsed.name);
-            setMbti(parsed.mbti);
+
+            // 서버에서 최신 MBTI 정보를 가져와 로컬 데이터 보완
+            const fetchMbti = async () => {
+                try {
+                    const res = await fetch(`/api/remote/mbti/${parsed.id}`);
+                    if (res.ok) {
+                        const data = await res.json();
+                        if (data.mbti && data.mbti !== parsed.mbti) {
+                            const updated = { ...parsed, mbti: data.mbti };
+                            setMbti(data.mbti);
+                            setUserInfo(updated);
+                            localStorage.setItem("user_info", JSON.stringify(updated));
+                        } else {
+                            setMbti(data.mbti || parsed.mbti);
+                        }
+                    }
+                } catch (err) {
+                    console.error("Failed to fetch MBTI from server:", err);
+                    setMbti(parsed.mbti); // Fallback to local
+                }
+            };
+            fetchMbti();
         }
     }, []);
 
-    const handleUpdate = () => {
-        if (nickname.trim().length <= 2) {
+    const handleUpdate = async () => {
+        const trimmedNickname = nickname.trim();
+        const trimmedMbti = mbti.trim().toUpperCase();
+
+        if (trimmedNickname.length <= 2) {
             alert("닉네임을 3글자 이상 입력해주세요.");
             return;
         }
 
-        if (mbti.trim().length !== 4) {
+        if (trimmedMbti.length !== 4) {
             alert("MBTI를 4자리로 입력해주세요.");
             return;
         }
 
-        if (!VALID_MBTI_TYPES.includes(mbti.trim().toUpperCase())) {
+        if (!VALID_MBTI_TYPES.includes(trimmedMbti)) {
             alert("유효하지 않은 MBTI 유형입니다.");
             return;
         }
 
         if (!userInfo) return;
 
-        const updatedInfo = {
-            ...userInfo,
-            name: nickname.trim(),
-            mbti: mbti.trim().toUpperCase()
-        };
+        setIsLoading(true);
+        try {
+            // 1. Update MBTI on server
+            const mbtiResponse = await fetch(`/api/remote/mbti/${userInfo.id}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ mbti: trimmedMbti })
+            });
 
-        localStorage.setItem("user_info", JSON.stringify(updatedInfo));
-        setUserInfo(updatedInfo);
-        alert("프로필이 성공적으로 수정되었습니다.");
+            if (!mbtiResponse.ok) {
+                throw new Error("서버에 MBTI를 저장하는 데 실패했습니다.");
+            }
+
+            // 2. Update local storage (nickname is currently local-only update)
+            const updatedInfo = {
+                ...userInfo,
+                name: trimmedNickname,
+                mbti: trimmedMbti
+            };
+
+            localStorage.setItem("user_info", JSON.stringify(updatedInfo));
+            setUserInfo(updatedInfo);
+            alert("프로필이 성공적으로 수정되었습니다.");
+        } catch (err: any) {
+            alert(err.message || "오류가 발생했습니다.");
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     const handleCancel = () => {
@@ -93,7 +137,9 @@ export default function MyPage() {
                         />
                     </S.InputGroup>
                     <S.ButtonGroup>
-                        <S.SubmitButton onClick={handleUpdate}>수정하기</S.SubmitButton>
+                        <S.SubmitButton onClick={handleUpdate} disabled={isLoading}>
+                            {isLoading ? "처리 중..." : "수정하기"}
+                        </S.SubmitButton>
                         <S.CancelButton onClick={handleCancel}>취소</S.CancelButton>
                     </S.ButtonGroup>
                 </S.Section>
