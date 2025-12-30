@@ -13,6 +13,7 @@ export default function MyPage() {
     const [mbti, setMbti] = useState("");
     const [userInfo, setUserInfo] = useState<{ id: number; name: string; mbti: string } | null>(null);
     const [isLoading, setIsLoading] = useState(false);
+    const [comments, setComments] = useState<string[]>([]);
 
     // 닉네임이 같은 유저 검색 → user_id로 상태 셋 → 안전하게 최신 name/mbti도 db에 저장(자동 반영, 킵)
     useEffect(() => {
@@ -27,7 +28,7 @@ export default function MyPage() {
                         const parsed = JSON.parse(storedInfo);
                         localName = parsed.name || "";
                         localMbti = parsed.mbti || "";
-                    } catch {}
+                    } catch { }
                 }
 
                 // 닉네임을 결정한다: 킵/자동이니까 localStorage→필드값→""
@@ -50,7 +51,7 @@ export default function MyPage() {
                     try {
                         const errData = await res.json();
                         errorDetail = errData?.detail;
-                    } catch {}
+                    } catch { }
                     throw new Error(errorDetail || "유저 정보를 불러오는 데 실패했습니다.");
                 }
 
@@ -105,7 +106,7 @@ export default function MyPage() {
                         setUserInfo(parsed);
                         setNickname(parsed.name || "");
                         setMbti(parsed.mbti || "");
-                    } catch {}
+                    } catch { }
                 }
             }
         }
@@ -144,7 +145,7 @@ export default function MyPage() {
                 setUserInfo(updatedInfo);
                 setNickname(trimmedNickname);
                 setMbti(trimmedMbti);
-            } catch {}
+            } catch { }
         }, 400);
         return () => clearTimeout(tid);
         // userInfo는 id만 의존, nickname/mbti는 킵 자동화 위해 포함
@@ -159,11 +160,17 @@ export default function MyPage() {
         }
     };
 
-    const comments = [
-        "이번 여행은 정말 값진 여행이였습니다. 이번 여행은 정말 값진 여행이였습니다. 이번 여행은 정말 값진 여행이였습니다.",
-        "이번 여행은 정말 값진 여행이였습니다. 이번 여행은 정말 값진 여행이였습니다. 이번 여행은 정말 값진 여행이였습니다.",
-        "이번 여행은 정말 값진 여행이였습니다. 이번 여행은 정말 값진 여행이였습니다."
-    ];
+    // 로컬 스토리지에서 댓글 목록 불러오기
+    useEffect(() => {
+        const storedComments = localStorage.getItem("my_comments");
+        if (storedComments) {
+            try {
+                setComments(JSON.parse(storedComments));
+            } catch (e) {
+                console.error("Failed to parse comments", e);
+            }
+        }
+    }, []);
 
     return (
         <S.Layout>
@@ -201,7 +208,7 @@ export default function MyPage() {
                 </S.Section>
 
                 <S.Section>
-                    <S.SectionTitle>이때 동안 남긴 댓글</S.SectionTitle>
+                    <S.SectionTitle>이때 동안 남긴 쪽지</S.SectionTitle>
                     <S.CommentList>
                         {comments.map((comment, index) => (
                             <S.CommentBubble key={index}>

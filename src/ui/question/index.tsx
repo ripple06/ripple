@@ -10,6 +10,20 @@ export default function Question() {
     const router = useRouter();
     const [question, setQuestion] = useState("");
 
+    const handleComplete = () => {
+        if (!question.trim()) {
+            alert("쪽지를 입력해주세요.");
+            return;
+        }
+
+        const storedComments = localStorage.getItem("my_comments");
+        const comments = storedComments ? JSON.parse(storedComments) : [];
+        comments.unshift(question.trim());
+        localStorage.setItem("my_comments", JSON.stringify(comments));
+
+        router.push("/main");
+    };
+
     return (
         <S.Layout>
             <S.Container>
@@ -19,7 +33,7 @@ export default function Question() {
                     </S.BackButton>
                 </S.Header>
                 <S.Title>
-                    여행 코스를 완료한 후{"\n"}다음 사람에게 질문을 남기세요.
+                    여행 코스를 완료한 후{"\n"}다음 사람에게 쪽지를 남기세요.
                 </S.Title>
 
                 <S.InputArea>
@@ -31,7 +45,7 @@ export default function Question() {
                     />
                 </S.InputArea>
 
-                <S.CompleteButton onClick={() => router.push("/main")}>
+                <S.CompleteButton onClick={handleComplete}>
                     완료
                 </S.CompleteButton>
 
