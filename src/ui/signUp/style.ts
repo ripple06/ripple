@@ -123,3 +123,10 @@ export const BottomButton = styled.button`
     cursor: not-allowed;
   }
 `;
+
+export const ErrorMessage = styled.p`
+  color: #ff6b6b;
+  font-size: 0.8rem;
+  margin-top: -0.6rem;
+  height: 1rem;
+`;

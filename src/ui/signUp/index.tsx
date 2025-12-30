@@ -1,11 +1,39 @@
-"use client";
-
 import { useRouter } from "next/navigation";
 import * as S from "./style";
 import Image from "next/image";
+import { useState } from "react";
 
 export default function SignUp() {
     const router = useRouter();
+    const [userId, setUserId] = useState("test_id");
+    const [userName, setUserName] = useState("");
+    const [mbti, setMbti] = useState("");
+    const [error, setError] = useState("");
+
+    const handleLogin = () => {
+        const trimmedName = userName.trim();
+        const trimmedMbti = mbti.trim();
+
+        if (trimmedName.length <= 2) {
+            setError("닉네임을 3글자 이상 입력해주세요.");
+            return;
+        }
+
+        if (trimmedMbti.length !== 4) {
+            setError("MBTI를 4자리로 입력해주세요.");
+            return;
+        }
+
+        setError("");
+        const userInfo = {
+            id: "test_id",
+            name: trimmedName,
+            mbti: trimmedMbti.toUpperCase()
+        };
+
+        localStorage.setItem("user_info", JSON.stringify(userInfo));
+        router.push("/success");
+    };
 
     return (
         <S.Layout>
@@ -25,13 +53,28 @@ export default function SignUp() {
                 <S.Form>
                     <S.InputGroup>
                         <S.Label>닉네임<span>*</span></S.Label>
-                        <S.Input placeholder="2글자 이상 입력해주세요" />
+                        <S.Input
+                            placeholder="3글자 이상 입력해주세요"
+                            value={userName}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                                setUserName(e.target.value);
+                                if (error) setError("");
+                            }}
+                        />
                     </S.InputGroup>
                     <S.InputGroup>
                         <S.Label>MBTI<span>*</span></S.Label>
-                        <S.Input placeholder="ISTP" />
+                        <S.Input
+                            placeholder="ISTP"
+                            value={mbti}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                                setMbti(e.target.value.toUpperCase());
+                                if (error) setError("");
+                            }}
+                        />
                     </S.InputGroup>
-                    <S.BottomButton onClick={() => router.push("/success")}>다음</S.BottomButton>
+                    <S.ErrorMessage>{error}</S.ErrorMessage>
+                    <S.BottomButton onClick={handleLogin}>다음</S.BottomButton>
                 </S.Form>
             </S.Container>
         </S.Layout>
