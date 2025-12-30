@@ -3,9 +3,17 @@
 import * as S from "./style";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function Landing() {
   const router = useRouter();
+
+  useEffect(() => {
+    const userInfo = localStorage.getItem("user_info");
+    if (userInfo) {
+      router.push("/main");
+    }
+  }, [router]);
 
   return (
     <S.Layout>
