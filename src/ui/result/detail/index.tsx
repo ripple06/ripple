@@ -1,26 +1,20 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import BottomNav from "@/components/BottomNav";
+import { REGION_DATA } from "@/constants/regionData";
 import * as S from "./style";
 
 interface DetailProps {
     params: { id: string };
 }
 
-const DETAIL_DATA: Record<string, { title: string; highlight: string; description: string; image: string }> = {
-    "1": {
-        highlight: "영도",
-        title: "로 알아보는\n해양 생태계",
-        image: "https://images.unsplash.com/photo-1590603740183-980e7f6920eb?q=80&w=800&auto=format&fit=crop",
-        description: "영도에 흰여울문화마을은 영도에 흰여울문화마을은 영도에 흰여울문화마을은 영도에 흰여울문화마을은 영도에 흰여울문화마을은 영도에 흰여울문화마을은 영도에 흰여울문화마을은 영도에 흰여울문화마을은 영도에 흰여울문화마을은 영도에 흰여울문화마을은 영도에 흰여울문화마을은 영도에 흰여울문화마을은 영도에 흰여울문화마을은 영도에 흰여울문화마을은 영도에 흰여울문화마을은 영도에 흰여울문화마을은 영도에 흰여울문화마을은 영도에 흰여울문화마을은 영도에 흰여울문화마을은 영도에 흰여울문화마을은 영도에 흰여울문화마을은 영도에 흰여울문화마을은 영도에 흰여울문화마을은 영도에 흰여울문화마을은 영도에 흰여울문화마을은 영도에 흰여울문화마을은"
-    },
-};
-
 export default function ResultDetail({ params }: DetailProps) {
     const router = useRouter();
-    const data = DETAIL_DATA[params.id] || DETAIL_DATA["1"];
+    const searchParams = useSearchParams();
+    const region = searchParams.get('region') || '사하구';
+    const data = (REGION_DATA[region] || REGION_DATA['사하구']).detail;
 
     return (
         <S.Layout>
@@ -40,9 +34,22 @@ export default function ResultDetail({ params }: DetailProps) {
                         <Image src={data.image} alt={data.highlight} width={400} height={300} />
                     </S.ImageWrapper>
 
+                    <S.InfoContainer>
+                        <S.InfoItem>
+                            🐠 대표 생물: {data.marineLife}
+                        </S.InfoItem>
+                        <S.InfoItem>
+                            🌡️ 평균 수온: {data.climate}
+                        </S.InfoItem>
+                    </S.InfoContainer>
+
                     <S.Description>
                         {data.description}
                     </S.Description>
+
+                    <S.LinkButton onClick={() => window.open(data.searchUrl, '_blank')}>
+                        자세히 알아보기 (Naver 검색) <Image src="/arrow.svg" alt="arrow" width={8} height={12} style={{ transform: 'rotate(180deg)' }} />
+                    </S.LinkButton>
                 </S.Content>
 
                 <BottomNav />

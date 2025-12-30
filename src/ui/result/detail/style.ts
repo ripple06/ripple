@@ -58,7 +58,7 @@ export const ImageWrapper = styled.div`
   aspect-ratio: 1.5;
   border-radius: 12px;
   overflow: hidden;
-  margin-bottom: 12px;
+  margin-bottom: 24px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 
   img {
@@ -68,10 +68,52 @@ export const ImageWrapper = styled.div`
   }
 `;
 
+export const InfoContainer = styled.div`
+  display: flex;
+  gap: 10px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+`;
+
+export const InfoItem = styled.div`
+  background-color: #f5f5ff;
+  border: 1px solid #e0e0ff;
+  padding: 10px 14px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  color: #5c4dff;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+`;
+
 export const Description = styled.p`
   font-size: 1.1rem;
   color: #424242;
   line-height: 1.6;
   white-space: pre-wrap;
-  word-break: break-all;
+  word-break: keep-all;
+  margin-bottom: 30px;
+`;
+
+export const LinkButton = styled.button`
+  width: 100%;
+  padding: 16px;
+  background-color: #F8F9FA;
+  border: 1px solid #E0E0E0;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #212121;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: #f0f0f0;
+  }
 `;

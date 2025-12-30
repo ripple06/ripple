@@ -82,19 +82,7 @@ export const CourseImage = styled.div`
     height: 140px;
     background-color: #D9D9D9;
     position: relative;
-    
-    &::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-image: url('https://images.unsplash.com/photo-1590603740183-980e7f6920eb?q=80&w=160&auto=format&fit=crop');
-        background-size: cover;
-        background-position: center;
-        opacity: 0.8;
-    }
+    overflow: hidden;
 `;
 
 export const CourseName = styled.div`

@@ -1,21 +1,20 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import BottomNav from "@/components/BottomNav";
+import { REGION_DATA } from "@/constants/regionData";
 import * as S from "./style";
 
 export default function Result() {
     const router = useRouter();
+    const searchParams = useSearchParams();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-    const courseItems = [
-        { id: 1, name: "흰여울문화마을", top: 0, align: 'left' },
-        { id: 2, name: "흰여울문화마을", top: 94, align: 'right' },
-        { id: 3, name: "흰여울문화마을", top: 256, align: 'left' },
-        { id: 4, name: "흰여울문화마을", top: 340, align: 'right' },
-    ]
+    const region = searchParams.get('region') || '사하구';
+    const regionData = REGION_DATA[region] || REGION_DATA['사하구'];
+    const courseItems = regionData.courses;
 
     return (
         <S.Layout>
@@ -39,10 +38,12 @@ export default function Result() {
                             top={item.top}
                             left={item.align === 'left' ? 24 : undefined}
                             right={item.align === 'right' ? 24 : undefined}
-                            onClick={() => router.push(`/result/detail/${item.id}`)}
+                            onClick={() => router.push(`/result/detail/${item.id}?region=${region}`)}
                         >
                             <S.CourseCard>
-                                <S.CourseImage />
+                                <S.CourseImage>
+                                    <Image src={item.image} alt={item.name} fill style={{ objectFit: 'cover' }} />
+                                </S.CourseImage>
                                 <S.CourseName>{item.name}</S.CourseName>
                             </S.CourseCard>
                         </S.CourseItemWrapper>

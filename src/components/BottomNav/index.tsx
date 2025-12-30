@@ -10,7 +10,7 @@ export default function BottomNav() {
 
     const isActive = (path: string) => {
         if (path === '/recommand') {
-            return pathname === '/recommand' || pathname === '/result' || pathname === '/question';
+            return pathname === '/recommand' || pathname === '/result' || pathname === '/question' || pathname === '/detail';
         }
         if (path === '/quiz') {
             return pathname === '/quiz' || pathname === '/quizPlay';

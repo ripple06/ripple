@@ -26,7 +26,7 @@ export default function Recommand() {
             setStep('analyzing');
             setTimeout(() => {
                 setStep('complete');
-            }, 3000);
+            }, 6000);
         }
     };
 
@@ -87,7 +87,7 @@ export default function Recommand() {
                             <Image src="/wave.svg" alt="wave" width={320} height={320} priority />
                         </S.WaveImageContainer>
                         {step === 'complete' && (
-                            <S.NextButton onClick={() => router.push('/result')}>다음</S.NextButton>
+                            <S.NextButton onClick={() => router.push(`/result?region=${selectedRegion}`)}>다음</S.NextButton>
                         )}
                     </S.AnalysisContainer>
                 )}
