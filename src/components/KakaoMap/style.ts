@@ -4,6 +4,69 @@ export const MapWrapper = styled.div`
   width: 100%;
   height: 100%;
   position: relative;
+
+  /* Custom Overlay Styles */
+  .custom-overlay {
+    position: relative;
+    pointer-events: auto;
+  }
+
+  .overlay-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+    width: 120px;
+    display: flex;
+    flex-direction: column;
+    border: 2px solid white;
+    transition: transform 0.2s;
+    
+    &:hover {
+      transform: translateY(-5px);
+      z-index: 100;
+    }
+  }
+
+  .overlay-image-wrapper {
+    width: 100%;
+    height: 80px;
+    overflow: hidden;
+    
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: crop;
+    }
+  }
+
+  .overlay-content {
+    padding: 6px 8px;
+    background: white;
+    text-align: center;
+  }
+
+  .overlay-title {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #333;
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Triangle pointer */
+  .overlay-card::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-top: 8px solid white;
+  }
 `;
 
 export const MapContainer = styled.div`

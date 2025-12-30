@@ -19,7 +19,7 @@ export default function KakaoMap({ attractions, onCenterChange }: Props) {
     const mapContainer = useRef<HTMLDivElement>(null);
     const mapRef = useRef<any>(null);
     const markersRef = useRef<any[]>([]);
-    const attractionMarkersRef = useRef<any[]>([]);
+    const customOverlaysRef = useRef<any[]>([]);
     const polylineRef = useRef<any>(null);
 
     const [startPoint, setStartPoint] = useState<{ lat: number; lng: number } | null>(null);
@@ -152,39 +152,40 @@ export default function KakaoMap({ attractions, onCenterChange }: Props) {
         }
     }, [startPoint, endPoint]);
 
-    // 3️⃣ 관광 정보 마커 업데이트
+    // 3️⃣ 관광 정보 커스텀 오버레이 업데이트
     useEffect(() => {
         if (!mapRef.current || !window.kakao || !attractions) return;
 
-        // 기존 관광 마커 제거
-        attractionMarkersRef.current.forEach(marker => marker.setMap(null));
-        attractionMarkersRef.current = [];
+        // 기존 오버레이 제거
+        customOverlaysRef.current.forEach(overlay => overlay.setMap(null));
+        customOverlaysRef.current = [];
 
         const kakao = window.kakao;
 
         attractions.forEach(attraction => {
-            const marker = new kakao.maps.Marker({
-                position: new kakao.maps.LatLng(Number(attraction.mapy), Number(attraction.mapx)),
-                map: mapRef.current,
-                title: attraction.title,
-                // 관광지 마커임을 구분하기 위해 투명도를 주거나 이미지를 다르게 할 수 있음
-                opacity: 0.8
+            const position = new kakao.maps.LatLng(Number(attraction.mapy), Number(attraction.mapx));
+
+            const content = `
+                <div class="custom-overlay">
+                    <div class="overlay-card">
+                        <div class="overlay-image-wrapper">
+                            <img src="${attraction.firstimage || 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=150&h=100&fit=crop'}" alt="${attraction.title}" />
+                        </div>
+                        <div class="overlay-content">
+                            <span class="overlay-title">${attraction.title}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            const customOverlay = new kakao.maps.CustomOverlay({
+                position: position,
+                content: content,
+                yAnchor: 1.2
             });
 
-            // 커스텀 오버레이나 인포윈도우 추가 가능
-            const infowindow = new kakao.maps.InfoWindow({
-                content: `<div style="padding:5px; font-size:12px; color:#333;">${attraction.title}</div>`
-            });
-
-            kakao.maps.event.addListener(marker, 'mouseover', () => {
-                infowindow.open(mapRef.current, marker);
-            });
-
-            kakao.maps.event.addListener(marker, 'mouseout', () => {
-                infowindow.close();
-            });
-
-            attractionMarkersRef.current.push(marker);
+            customOverlay.setMap(mapRef.current);
+            customOverlaysRef.current.push(customOverlay);
         });
     }, [attractions]);
 
