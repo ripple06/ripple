@@ -24,7 +24,7 @@ export default function MyPage() {
             // 서버에서 최신 MBTI 정보를 가져와 로컬 데이터 보완
             const fetchMbti = async () => {
                 try {
-                    const res = await fetch(`/api/remote/mbti/${parsed.id}`);
+                    const res = await fetch(`/api/mbti/${parsed.id}`);
                     if (res.ok) {
                         const data = await res.json();
                         if (data.mbti && data.mbti !== parsed.mbti) {
