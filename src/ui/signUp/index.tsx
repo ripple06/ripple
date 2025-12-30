@@ -5,7 +5,6 @@ import { useState } from "react";
 
 export default function SignUp() {
     const router = useRouter();
-    const [userId, setUserId] = useState("test_id");
     const [userName, setUserName] = useState("");
     const [mbti, setMbti] = useState("");
     const [error, setError] = useState("");
@@ -25,13 +24,19 @@ export default function SignUp() {
         }
 
         setError("");
+
+        // ID 자동 증가 로직
+        const lastId = localStorage.getItem("last_user_id");
+        const newId = lastId ? parseInt(lastId) + 1 : 1;
+
         const userInfo = {
-            id: "test_id",
+            id: newId,
             name: trimmedName,
             mbti: trimmedMbti.toUpperCase()
         };
 
         localStorage.setItem("user_info", JSON.stringify(userInfo));
+        localStorage.setItem("last_user_id", newId.toString());
         router.push("/success");
     };
 
