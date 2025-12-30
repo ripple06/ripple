@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, useMemo } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import * as S from "./style";
 import BottomNav from "@/components/BottomNav";
 import KakaoMap, { KakaoMapHandle } from "@/components/KakaoMap";
@@ -11,6 +11,7 @@ import { REGION_DATA } from "@/constants/regionData";
 
 export default function Main() {
     const mapRef = useRef<KakaoMapHandle>(null);
+    const router = useRouter();
     const searchParams = useSearchParams();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [attractions, setAttractions] = useState<Attraction[]>([]);
@@ -23,6 +24,19 @@ export default function Main() {
         const regionCourses = region ? REGION_DATA[region]?.courses : null;
         return regionCourses ? regionCourses.map(c => ({ lat: c.lat, lng: c.lng, title: c.name })) : undefined;
     }, [region]);
+
+    // 코스 경로가 있으면 로컬 스토리지에 저장
+    useEffect(() => {
+        if (coursePath && coursePath.length > 0) {
+            localStorage.setItem("current_course", JSON.stringify(coursePath));
+        }
+    }, [coursePath]);
+
+    const handleFinishCourse = () => {
+        // 코스 완료 시 로컬 스토리지 정리 (선택 사항, 여기서는 유지하되 페이지 이동만 함)
+        // localStorage.removeItem("current_course"); 
+        router.push('/question');
+    };
 
     // 백엔드 데이터 동기화 로직
     useEffect(() => {
@@ -88,6 +102,7 @@ export default function Main() {
                         <S.FloatingButton onClick={handleNearbySearch} disabled={isLoading}>
                             {isLoading ? "검색 중..." : "주변 볼거리"}
                         </S.FloatingButton>
+                        <S.FloatingButton onClick={handleFinishCourse}>코스 끝내기</S.FloatingButton>
                         <S.FloatingButton onClick={handleCenterToUser}>현재 내 위치</S.FloatingButton>
                     </S.TopLeftGroup>
                 )}
