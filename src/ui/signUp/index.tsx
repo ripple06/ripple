@@ -2,6 +2,7 @@ import { useRouter } from "next/navigation";
 import * as S from "./style";
 import Image from "next/image";
 import { useState } from "react";
+import { VALID_MBTI_TYPES } from "@/constants/mbti";
 
 export default function SignUp() {
     const router = useRouter();
@@ -20,6 +21,11 @@ export default function SignUp() {
 
         if (trimmedMbti.length !== 4) {
             setError("MBTI를 4자리로 입력해주세요.");
+            return;
+        }
+
+        if (!VALID_MBTI_TYPES.includes(trimmedMbti.toUpperCase())) {
+            setError("유효하지 않은 MBTI 유형입니다.");
             return;
         }
 

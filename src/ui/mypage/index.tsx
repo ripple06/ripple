@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { VALID_MBTI_TYPES } from "@/constants/mbti";
 import BottomNav from "@/components/BottomNav";
 import * as S from "./style";
 
@@ -33,6 +34,11 @@ export default function MyPage() {
             return;
         }
 
+        if (!VALID_MBTI_TYPES.includes(mbti.trim().toUpperCase())) {
+            alert("유효하지 않은 MBTI 유형입니다.");
+            return;
+        }
+
         if (!userInfo) return;
 
         const updatedInfo = {
@@ -43,7 +49,6 @@ export default function MyPage() {
 
         localStorage.setItem("user_info", JSON.stringify(updatedInfo));
         setUserInfo(updatedInfo);
-        alert("프로필이 성공적으로 수정되었습니다.");
     };
 
     const comments = [
