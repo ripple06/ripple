@@ -24,11 +24,11 @@ export default function Main() {
 
             try {
                 // 1. 서버에서 MBTI 정보가 있는지 확인
-                const checkRes = await fetch(`/api/remote/mbti/${userInfo.id}`);
+                const checkRes = await fetch(`/mbti/${userInfo.id}`);
                 if (!checkRes.ok && checkRes.status === 404) {
                     // 서버에 정보가 없으면 로컬 정보를 전송 (동기화)
                     console.log("[Sync] Pushing local MBTI to server...");
-                    await fetch(`/api/remote/mbti/${userInfo.id}`, {
+                    await fetch(`/mbti/${userInfo.id}`, {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({ mbti: userInfo.mbti })

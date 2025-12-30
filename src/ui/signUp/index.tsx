@@ -12,18 +12,22 @@ export default function SignUp() {
     const [error, setError] = useState("");
     const [isLoading, setIsLoading] = useState(false);
 
-    const handleLogin = async () => {
+    // .env에 설정한 백엔드 URL
+    const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
+    const handleSignUp = async () => {
         const trimmedName = userName.trim();
         const trimmedPassword = password.trim();
-        const trimmedMbti = mbti.trim();
+        const trimmedMbti = mbti.trim().toUpperCase();
 
+        // 유효성 검사
         if (trimmedName.length <= 2) {
             setError("닉네임을 3글자 이상 입력해주세요.");
             return;
         }
 
-        if (trimmedPassword.length === 0) {
-            setError("비밀번호를 입력해주세요.");
+        if (trimmedPassword.length < 6) {
+            setError("비밀번호는 6자리 이상 입력해주세요.");
             return;
         }
 
@@ -32,7 +36,7 @@ export default function SignUp() {
             return;
         }
 
-        if (!VALID_MBTI_TYPES.includes(trimmedMbti.toUpperCase())) {
+        if (!VALID_MBTI_TYPES.includes(trimmedMbti)) {
             setError("유효하지 않은 MBTI 유형입니다.");
             return;
         }
@@ -41,8 +45,8 @@ export default function SignUp() {
         setIsLoading(true);
 
         try {
-            // 1. Signup
-            const signupResponse = await fetch("/api/remote/signup", {
+            // 1. 회원가입
+            const signupResponse = await fetch(`/signup`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ name: trimmedName, password: trimmedPassword })
@@ -56,24 +60,25 @@ export default function SignUp() {
             const userData = await signupResponse.json();
             const userId = userData.id;
 
-            // 2. Save MBTI
-            const mbtiResponse = await fetch(`/api/remote/mbti/${userId}`, {
+            // 2. MBTI 저장
+            const mbtiResponse = await fetch(`${API_URL}/users/${userId}/mbti`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ mbti: trimmedMbti.toUpperCase() })
+                body: JSON.stringify({ mbti: trimmedMbti })
             });
 
             if (!mbtiResponse.ok) {
-                console.error("Failed to save MBTI to server, but signup was successful.");
+                const mbtiError = await mbtiResponse.json();
+                setError(mbtiError.detail || "MBTI 저장에 실패했습니다.");
+                setIsLoading(false);
+                return;
             }
 
-            const userInfo = {
-                id: userId,
-                name: trimmedName,
-                mbti: trimmedMbti.toUpperCase()
-            };
-
+            // 3. localStorage 저장
+            const userInfo = { id: userId, name: trimmedName, mbti: trimmedMbti };
             localStorage.setItem("user_info", JSON.stringify(userInfo));
+
+            // 4. 성공 페이지 이동
             router.push("/success");
         } catch (err: any) {
             setError(err.message || "오류가 발생했습니다. 다시 시도해주세요.");
@@ -103,10 +108,11 @@ export default function SignUp() {
                         <S.Input
                             placeholder="3글자 이상 입력해주세요"
                             value={userName}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                            onChange={(e) => {
                                 setUserName(e.target.value);
                                 if (error) setError("");
                             }}
+                            disabled={isLoading}
                         />
                     </S.InputGroup>
                     <S.InputGroup>
@@ -115,10 +121,11 @@ export default function SignUp() {
                             type="password"
                             placeholder="비밀번호를 입력해주세요"
                             value={password}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                            onChange={(e) => {
                                 setPassword(e.target.value);
                                 if (error) setError("");
                             }}
+                            disabled={isLoading}
                         />
                     </S.InputGroup>
                     <S.InputGroup>
@@ -126,14 +133,15 @@ export default function SignUp() {
                         <S.Input
                             placeholder="ISTP"
                             value={mbti}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                            onChange={(e) => {
                                 setMbti(e.target.value.toUpperCase());
                                 if (error) setError("");
                             }}
+                            disabled={isLoading}
                         />
                     </S.InputGroup>
                     <S.ErrorMessage>{error}</S.ErrorMessage>
-                    <S.BottomButton onClick={handleLogin} disabled={isLoading}>
+                    <S.BottomButton onClick={handleSignUp} disabled={isLoading}>
                         {isLoading ? "처리 중..." : "다음"}
                     </S.BottomButton>
                 </S.Form>
