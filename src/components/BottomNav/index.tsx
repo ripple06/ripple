@@ -13,7 +13,7 @@ export default function BottomNav() {
             return pathname === '/recommand' || pathname.startsWith('/result') || pathname === '/question';
         }
         if (path === '/quiz') {
-            return pathname === '/quiz' || pathname === '/quizPlay';
+            return pathname === '/quiz' || pathname === '/quizPlay' || pathname === '/quiz/finish';
         }
         return pathname === path;
     };

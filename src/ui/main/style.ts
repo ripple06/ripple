@@ -28,10 +28,6 @@ export const Container = styled.div`
   height: 100vh;
   max-height: 932px;
   background-color: #e0e0e0;
-  background-image: url('/map-placeholder.png')
-  background-size: cover;
-  background-position: center;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
 `;
 
 export const TopLeftGroup = styled.div`
@@ -42,6 +38,7 @@ export const TopLeftGroup = styled.div`
   flex-direction: column;
   gap: 12px;
   margin-left: 20px;
+  margin-bottom: 40px;
 `;
 
 export const FloatingButton = styled.button`
