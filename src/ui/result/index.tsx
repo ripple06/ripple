@@ -54,7 +54,7 @@ export default function Result() {
                 </S.FloatingMenuButton>
                 {isMenuOpen && (
                     <S.TopLeftGroup>
-                        <S.FloatingButton onClick={() => router.push("/main")}>지도로 보기</S.FloatingButton>
+                        <S.FloatingButton onClick={() => router.push(`/main?region=${region}`)}>지도로 보기</S.FloatingButton>
                         <S.FloatingButton onClick={() => router.push("/question")}>완료하고 글남기기</S.FloatingButton>
                     </S.TopLeftGroup>
                 )}

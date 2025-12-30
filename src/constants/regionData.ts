@@ -6,6 +6,8 @@ export interface Course {
     top: number;
     image: string;
     searchUrl: string;
+    lat: number;
+    lng: number;
 }
 
 export interface RegionDetail {
@@ -33,7 +35,9 @@ export const REGION_DATA: Record<string, RegionData> = {
                 align: 'left',
                 top: 0,
                 image: "https://images.unsplash.com/photo-1549608276-5786777e6587?q=80&w=800&auto=format&fit=crop",
-                searchUrl: "https://search.naver.com/search.naver?query=을숙도+철새+공원"
+                searchUrl: "https://search.naver.com/search.naver?query=을숙도+철새+공원",
+                lat: 35.0886,
+                lng: 128.9664
             },
             {
                 id: "saha-2",
@@ -41,8 +45,10 @@ export const REGION_DATA: Record<string, RegionData> = {
                 description: "황홀한 일몰과 사구",
                 align: 'right',
                 top: 94,
-                image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRvelquLLOTtWncBhw77st0RLhGYEfIQ_mc1w&s",
-                searchUrl: "https://search.naver.com/search.naver?query=다대포+해수욕장"
+                image: "https://upload.wikimedia.org/wikipedia/commons/b/b3/Dadaepo_Beach_1.jpg",
+                searchUrl: "https://search.naver.com/search.naver?query=다대포+해수욕장",
+                lat: 35.04638,
+                lng: 128.96860
             },
             {
                 id: "saha-3",
@@ -51,7 +57,9 @@ export const REGION_DATA: Record<string, RegionData> = {
                 align: 'left',
                 top: 256,
                 image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTFP_6RemPrtTdiRvj35YIn1XZ8XyMA_DcdVw&s",
-                searchUrl: "https://search.naver.com/search.naver?query=아미산+전망대"
+                searchUrl: "https://search.naver.com/search.naver?query=아미산+전망대",
+                lat: 35.05052,
+                lng: 128.97172
             },
             {
                 id: "saha-4",
@@ -60,7 +68,9 @@ export const REGION_DATA: Record<string, RegionData> = {
                 align: 'right',
                 top: 340,
                 image: "https://i.namu.wiki/i/9JXTXXFMKxY2U-3-WMCqfpu80u25ufZK_Xhd2NAXvVznQ8PCskLh258Upn1c_DOABL473zMx25U3HcSqgo-4uw.webp",
-                searchUrl: "https://search.naver.com/search.naver?query=장림포구"
+                searchUrl: "https://search.naver.com/search.naver?query=장림포구",
+                lat: 35.0747,
+                lng: 128.9678
             },
         ],
         detail: {
@@ -82,7 +92,9 @@ export const REGION_DATA: Record<string, RegionData> = {
                 align: 'left',
                 top: 0,
                 image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTiZX_X1T202CtR4YdHFIp_Qnvhs_gEiKpAIQ&s",
-                searchUrl: "https://search.naver.com/search.naver?query=흰여울문화마을"
+                searchUrl: "https://search.naver.com/search.naver?query=흰여울문화마을",
+                lat: 35.0772,
+                lng: 129.0667
             },
             {
                 id: "yeongdo-2",
@@ -91,7 +103,9 @@ export const REGION_DATA: Record<string, RegionData> = {
                 align: 'right',
                 top: 94,
                 image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRL7KqpYGxUAC7mm7_dkdRi6ez_i8LH-FMr_A&s",
-                searchUrl: "https://search.naver.com/search.naver?query=태종대"
+                searchUrl: "https://search.naver.com/search.naver?query=태종대",
+                lat: 35.05361,
+                lng: 129.08583
             },
             {
                 id: "yeongdo-3",
@@ -100,7 +114,9 @@ export const REGION_DATA: Record<string, RegionData> = {
                 align: 'left',
                 top: 256,
                 image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSSp0V3L5zY-isCKZwgksHt49xzJOgUsh1r5Q&s",
-                searchUrl: "https://search.naver.com/search.naver?query=국립해양박물관"
+                searchUrl: "https://search.naver.com/search.naver?query=국립해양박물관",
+                lat: 35.0787,
+                lng: 129.0800
             },
             {
                 id: "yeongdo-4",
@@ -109,7 +125,9 @@ export const REGION_DATA: Record<string, RegionData> = {
                 align: 'right',
                 top: 340,
                 image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=800&auto=format&fit=crop",
-                searchUrl: "https://search.naver.com/search.naver?query=감지해변"
+                searchUrl: "https://search.naver.com/search.naver?query=감지해변",
+                lat: 35.0601, // Approximate near Taejongdae
+                lng: 129.0820
             },
         ],
         detail: {
@@ -131,7 +149,9 @@ export const REGION_DATA: Record<string, RegionData> = {
                 align: 'left',
                 top: 0,
                 image: "https://upload.wikimedia.org/wikipedia/commons/6/6f/%ED%95%B4%EB%8F%99%EC%9A%A9%EA%B6%81%EC%82%AC_%EC%82%AC%EC%B0%B0_%EC%A0%84%EA%B2%BD.jpg",
-                searchUrl: "https://search.naver.com/search.naver?query=해동용궁사"
+                searchUrl: "https://search.naver.com/search.naver?query=해동용궁사",
+                lat: 35.18835,
+                lng: 129.22332
             },
             {
                 id: "gijang-2",
@@ -140,7 +160,9 @@ export const REGION_DATA: Record<string, RegionData> = {
                 align: 'right',
                 top: 94,
                 image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQLxgWDxXUqFlNnptbHLsfiiSTYxRJBHj_Whw&s",
-                searchUrl: "https://search.naver.com/search.naver?query=아홉산숲"
+                searchUrl: "https://search.naver.com/search.naver?query=아홉산숲",
+                lat: 35.32437,
+                lng: 129.17386
             },
             {
                 id: "gijang-3",
@@ -149,7 +171,9 @@ export const REGION_DATA: Record<string, RegionData> = {
                 align: 'left',
                 top: 256,
                 image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTdkw7or_PUF9idf_6IG3f8vsEGhSdXk2rLvg&s",
-                searchUrl: "https://search.naver.com/search.naver?query=오시리아+산책로"
+                searchUrl: "https://search.naver.com/search.naver?query=오시리아+산책로",
+                lat: 35.19631,
+                lng: 129.20836
             },
             {
                 id: "gijang-4",
@@ -158,7 +182,9 @@ export const REGION_DATA: Record<string, RegionData> = {
                 align: 'right',
                 top: 340,
                 image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQEyCd2BIpreYH-DdFXahZ7je7tLTOm9GW78A&s",
-                searchUrl: "https://search.naver.com/search.naver?query=죽성성당"
+                searchUrl: "https://search.naver.com/search.naver?query=죽성성당",
+                lat: 35.24122,
+                lng: 129.24789
             },
         ],
         detail: {
@@ -180,7 +206,9 @@ export const REGION_DATA: Record<string, RegionData> = {
                 align: 'left',
                 top: 0,
                 image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTgAbArvzp4nl9YjU_2v9B9d_LKwffs5cNFhA&s",
-                searchUrl: "https://search.naver.com/search.naver?query=오륙도+스카이워크"
+                searchUrl: "https://search.naver.com/search.naver?query=오륙도+스카이워크",
+                lat: 35.09194,
+                lng: 129.12694
             },
             {
                 id: "namgu-2",
@@ -189,7 +217,9 @@ export const REGION_DATA: Record<string, RegionData> = {
                 align: 'right',
                 top: 94,
                 image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSS6L8cFvABFcn0n9AenmXDITg0Zz1p5mp3Vw&s",
-                searchUrl: "https://search.naver.com/search.naver?query=이기대+해안산책로"
+                searchUrl: "https://search.naver.com/search.naver?query=이기대+해안산책로",
+                lat: 35.13594,
+                lng: 129.12369
             },
             {
                 id: "namgu-3",
@@ -198,7 +228,9 @@ export const REGION_DATA: Record<string, RegionData> = {
                 align: 'left',
                 top: 256,
                 image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTI_PvA2sNPccpcg1koqYTrwXLJpyChOGkySQ&s",
-                searchUrl: "https://search.naver.com/search.naver?query=유엔기념공원"
+                searchUrl: "https://search.naver.com/search.naver?query=유엔기념공원",
+                lat: 35.12739,
+                lng: 129.09606
             },
             {
                 id: "namgu-4",
@@ -207,7 +239,9 @@ export const REGION_DATA: Record<string, RegionData> = {
                 align: 'right',
                 top: 340,
                 image: "https://i.namu.wiki/i/vCi3IKsD_Ey0ZsPI2PYIVztD9JDP2SvuT73h4padGo6A26keErCUBxHM9FjnItg8u7R7QUeq5A5-my6d6c9fYA.webp",
-                searchUrl: "https://search.naver.com/search.naver?query=황령산+야경"
+                searchUrl: "https://search.naver.com/search.naver?query=황령산+야경",
+                lat: 35.15736,
+                lng: 129.08189
             },
         ],
         detail: {
@@ -229,7 +263,9 @@ export const REGION_DATA: Record<string, RegionData> = {
                 align: 'left',
                 top: 0,
                 image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTDadXWrBEKd9V6MxiUtJXl2ymC-9RG5E5DWw&s",
-                searchUrl: "https://search.naver.com/search.naver?query=송도+해상케이블카"
+                searchUrl: "https://search.naver.com/search.naver?query=송도+해상케이블카",
+                lat: 35.07664,
+                lng: 129.02340
             },
             {
                 id: "seogu-2",
@@ -238,7 +274,9 @@ export const REGION_DATA: Record<string, RegionData> = {
                 align: 'right',
                 top: 94,
                 image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTrO1rREOhGK8OK4xMbA70FqkSrDHp3fomMeA&s",
-                searchUrl: "https://search.naver.com/search.naver?query=송도+구름산책로"
+                searchUrl: "https://search.naver.com/search.naver?query=송도+구름산책로",
+                lat: 35.07594,
+                lng: 129.02157
             },
             {
                 id: "seogu-3",
@@ -247,7 +285,9 @@ export const REGION_DATA: Record<string, RegionData> = {
                 align: 'left',
                 top: 256,
                 image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTyyao3EwU852Gs2a3-fpH2mu4D74a8WhliGQ&s",
-                searchUrl: "https://search.naver.com/search.naver?query=임시수도기념관"
+                searchUrl: "https://search.naver.com/search.naver?query=임시수도기념관",
+                lat: 35.10375,
+                lng: 129.01760
             },
             {
                 id: "seogu-4",
@@ -256,7 +296,9 @@ export const REGION_DATA: Record<string, RegionData> = {
                 align: 'right',
                 top: 340,
                 image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRMtlp9q2V4kotFb4ReEv8xNz1qHI2WArF6nA&s",
-                searchUrl: "https://search.naver.com/search.naver?query=암남공원"
+                searchUrl: "https://search.naver.com/search.naver?query=암남공원",
+                lat: 35.0605, // Approximate location for Amnam Park
+                lng: 129.0195
             },
         ],
         detail: {

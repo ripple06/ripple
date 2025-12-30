@@ -13,13 +13,14 @@ declare global {
 interface Props {
     attractions?: Attraction[];
     onCenterChange?: (lat: number, lng: number) => void;
+    coursePath?: { lat: number; lng: number; title: string }[];
 }
 
 export interface KakaoMapHandle {
     setCenterToUser: () => void;
 }
 
-const KakaoMap = forwardRef<KakaoMapHandle, Props>(({ attractions, onCenterChange }, ref) => {
+const KakaoMap = forwardRef<KakaoMapHandle, Props>(({ attractions, onCenterChange, coursePath }, ref) => {
     const mapContainer = useRef<HTMLDivElement>(null);
     const mapRef = useRef<any>(null);
     const markersRef = useRef<any[]>([]);
@@ -172,6 +173,46 @@ const KakaoMap = forwardRef<KakaoMapHandle, Props>(({ attractions, onCenterChang
             });
         }
     }, [startPoint, endPoint]);
+
+    // 2-1) 코스 경로 그리기 (외부 prop coursePath 이용)
+    useEffect(() => {
+        if (!mapRef.current || !window.kakao || !coursePath || coursePath.length === 0) return;
+
+        const kakao = window.kakao;
+
+        // 기존 마커/폴리라인 제거 (이 컴포넌트 내에서 start/end point와 겹치지 않게 별도 관리 필요하나, 
+        // 현재는 start/end point 로직이 사용자 상호작용용이고, coursePath는 보기용이므로 충돌 가능성 낮음.
+        // 다만 깨끗하게 하려면 별도 ref 배열 관리 추천)
+
+        // 간단 구현: coursePath가 들어오면 지도 중심 이동 및 그리기
+
+        const points = coursePath.map(p => new kakao.maps.LatLng(p.lat, p.lng));
+
+        // 마커 생성
+        coursePath.forEach(p => {
+            new kakao.maps.Marker({
+                map: mapRef.current,
+                position: new kakao.maps.LatLng(p.lat, p.lng),
+                title: p.title
+            });
+        });
+
+        // 선 그리기
+        new kakao.maps.Polyline({
+            map: mapRef.current,
+            path: points,
+            strokeWeight: 5,
+            strokeColor: '#7364FE', // main brand color
+            strokeOpacity: 0.8,
+            strokeStyle: 'solid'
+        });
+
+        // 지도 범위 재설정
+        const bounds = new kakao.maps.LatLngBounds();
+        points.forEach(p => bounds.extend(p));
+        mapRef.current.setBounds(bounds);
+
+    }, [coursePath]);
 
     // 3️⃣ 관광 정보 커스텀 오버레이 업데이트
     useEffect(() => {

@@ -1,18 +1,28 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
+import { useSearchParams } from "next/navigation";
 import * as S from "./style";
 import BottomNav from "@/components/BottomNav";
 import KakaoMap, { KakaoMapHandle } from "@/components/KakaoMap";
 import Image from "next/image";
 import { fetchNearbyAttractions, Attraction } from "@/utils/tourism";
+import { REGION_DATA } from "@/constants/regionData";
 
 export default function Main() {
     const mapRef = useRef<KakaoMapHandle>(null);
+    const searchParams = useSearchParams();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [attractions, setAttractions] = useState<Attraction[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [mapCenter, setMapCenter] = useState<{ lat: number; lng: number } | null>(null);
+
+    const region = searchParams.get('region');
+
+    const coursePath = useMemo(() => {
+        const regionCourses = region ? REGION_DATA[region]?.courses : null;
+        return regionCourses ? regionCourses.map(c => ({ lat: c.lat, lng: c.lng, title: c.name })) : undefined;
+    }, [region]);
 
     // 백엔드 데이터 동기화 로직
     useEffect(() => {
@@ -71,6 +81,7 @@ export default function Main() {
                     ref={mapRef}
                     attractions={attractions}
                     onCenterChange={(lat: number, lng: number) => setMapCenter({ lat, lng })}
+                    coursePath={coursePath}
                 />
                 {isMenuOpen && (
                     <S.TopLeftGroup>
