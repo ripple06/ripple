@@ -75,6 +75,7 @@ async function customAxios<T = any>(config: AxiosRequestConfig): Promise<AxiosRe
     };
 
     // Add body for methods that support it
+    // Explicitly check for methods that support a body to avoid TS type overlap errors
     if ((method === 'POST' || method === 'PUT' || method === 'DELETE' || method === 'PATCH') && data !== undefined) {
         fetchOptions.body = JSON.stringify(data);
     }
