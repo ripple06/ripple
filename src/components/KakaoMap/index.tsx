@@ -16,10 +16,18 @@ export default function KakaoMap() {
     const polylineRef = useRef<any>(null);
 
     const [startPoint, setStartPoint] = useState<{ lat: number; lng: number } | null>(null);
-    const [endPoint, setEndPoint] = useState<{ lat: number; lng: number } | null>(null);
+    const [endPoint, setEndPoint] = useState<{ lat: number; lng: number 
+
+    } | null>(null);
 
     // 1️⃣ Kakao SDK 로드 및 지도 초기화
     useEffect(() => {
+        // Warn early if the JS SDK key is missing (helps debug prod builds where env wasn't inlined)
+        if (!process.env.NEXT_PUBLIC_KAKAO_APP_JS_KEY) {
+            console.error("NEXT_PUBLIC_KAKAO_APP_JS_KEY is not defined. Ensure it's set in Vercel (Production) and redeploy. The Kakao Maps SDK will not load without it.");
+            return;
+        }
+
         const loadKakaoScript = () => {
             if (!window.kakao) {
                 const script = document.createElement("script");

@@ -10,6 +10,11 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Helpful runtime warning to catch missing env during production build/runtime
+  if (!process.env.NEXT_PUBLIC_KAKAO_APP_JS_KEY) {
+    console.warn('NEXT_PUBLIC_KAKAO_APP_JS_KEY is missing. Kakao maps may not load in production. Check Vercel environment variables and redeploy.');
+  }
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body suppressHydrationWarning>
